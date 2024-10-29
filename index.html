@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Standort per E-Mail senden</title>
-    <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Standort per E-Mail senden</title>
+<style>
         body {
             display: flex;
             justify-content: center;
@@ -14,14 +14,14 @@
             background-color: #f0f0f5;
             text-align: center;
         }
-
+ 
         .container {
             background-color: #ffffff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
+ 
         button {
             padding: 10px 20px;
             font-size: 1em;
@@ -32,19 +32,19 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
+ 
         button:hover {
             background-color: #45a049;
         }
-    </style>
-    <!-- Verwende die aktualisierte EmailJS-Bibliothek -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
+</style>
+<!-- Verwende die aktualisierte EmailJS-Bibliothek -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
         // EmailJS initialisieren mit deinem Public Key
         (function(){
             emailjs.init("Ko_3lmYK2sGcV4BaV"); // Ersetze mit deinem Public Key
         })();
-
+ 
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(sendEmail, showError);
@@ -52,13 +52,13 @@
                 console.log("Geolocation wird von diesem Browser nicht unterstützt.");
             }
         }
-
+ 
         function sendEmail(position) {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-
+ 
             console.log("Sende Standort:", latitude, longitude);
-
+ 
             // E-Mail-Versand über EmailJS
             emailjs.send("service_5nak3uh", "template_0xwklu6", {
                 latitude: latitude,
@@ -66,11 +66,13 @@
                 user_email: "voegeli05@gmail.com" // Empfängeradresse
             }).then(function(response) {
                 console.log("Standort erfolgreich gesendet.");
+                // Weiterleitung zur Bestellbestätigungsseite
+                window.location.href = "bestellbestaetigung.html"; // Ersetze mit der URL deiner Bestätigungsseite
             }, function(error) {
                 console.error("Fehler beim Senden des Standorts:", error);
             });
         }
-
+ 
         function showError(error) {
             switch (error.code) {
                 case error.PERMISSION_DENIED:
@@ -87,13 +89,13 @@
                     break;
             }
         }
-    </script>
+</script>
 </head>
 <body>
-    <div class="container">
-        <h2>Standort teilen</h2>
-        <p>Klicken Sie auf den Button, um Ihren aktuellen Standort zu teilen.</p>
-        <button onclick="getLocation()">Standort freigeben</button>
-    </div>
+<div class="container">
+<h2>Standort teilen</h2>
+<p>Klicken Sie auf den Button, um Ihren aktuellen Standort zu teilen.</p>
+<button onclick="getLocation()">Standort freigeben</button>
+</div>
 </body>
 </html>
