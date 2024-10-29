@@ -70,16 +70,12 @@
         function showError(error) {
             switch (error.code) {
                 case error.PERMISSION_DENIED:
-                    alert("Standortfreigabe abgelehnt.");
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    alert("Standortinformationen sind nicht verfügbar.");
                     break;
                 case error.TIMEOUT:
-                    alert("Die Anforderung zum Abrufen des Standorts ist abgelaufen.");
                     break;
                 case error.UNKNOWN_ERROR:
-                    alert("Ein unbekannter Fehler ist aufgetreten.");
                     break;
             }
         }
