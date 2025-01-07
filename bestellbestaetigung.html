@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>French Grammar Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .quiz-section {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .answers {
+            list-style-type: none;
+            padding: 0;
+        }
+        .answers li {
+            margin-bottom: 10px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>French Grammar Quiz</h1>
+    <div class="quiz-section" id="quiz-container"></div>
+    <button class="button" onclick="submitQuiz()">Submit</button>
+
+    <script>
+        const questions = [
+            { question: "Choose the correct form of the adjective for the feminine singular:", answers: ["grand", "grande", "grands", "grandes"], correct: 1 },
+            { question: "Which of the following is a pronom tonique?", answers: ["je", "lui", "nous", "elles"], correct: 1 },
+            { question: "Complete the sentence: \"Je _____ à Paris.\" (Futur Simple)", answers: ["vais", "irai", "suis allé", "vais aller"], correct: 1 },
+            { question: "What is the future simple form of 'avoir' for 'nous'?", answers: ["aurons", "aurai", "avez", "avais"], correct: 0 },
+            { question: "What is the pronom tonique for 'vous'?", answers: ["toi", "moi", "vous", "eux"], correct: 2 },
+            { question: "Which of the following is an irregular verb in futur simple?", answers: ["aller", "manger", "parler", "vendre"], correct: 0 },
+            { question: "Choose the correct form: \"Si tu _____, je t'aiderai.\"", answers: ["aide", "aides", "aidais", "aidera"], correct: 1 },
+            { question: "Which pronoun would you use to say 'with me'?", answers: ["avec moi", "avec toi", "avec lui", "avec nous"], correct: 0 },
+            { question: "What is the correct negation: \"Je _____ pas.\"", answers: ["ne vais", "ne pas", "ne suis", "ne"], correct: 0 },
+            { question: "Which adjective agrees with a feminine plural noun?", answers: ["grands", "grande", "grandes", "grand"], correct: 2 }
+        ];
+
+        function loadQuiz() {
+            const container = document.getElementById('quiz-container');
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.innerHTML = `<h3>${index + 1}. ${q.question}</h3>`;
+                const ul = document.createElement('ul');
+                ul.classList.add('answers');
+                q.answers.forEach((answer, i) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<input type='radio' name='q${index}' value='${i}'> ${answer}`;
+                    ul.appendChild(li);
+                });
+                questionDiv.appendChild(ul);
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function submitQuiz() {
+            let correct = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name='q${index}']:checked`);
+                if (selected && parseInt(selected.value) === q.correct) correct++;
+            });
+            alert(`You got ${correct} out of ${questions.length} questions correct!`);
+        }
+
+        window.onload = loadQuiz;
+    </script>
+</body>
+</html>
